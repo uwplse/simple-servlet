@@ -1,0 +1,27 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+
+repositories {
+  mavenCentral()
+}
+
+sourceSets {
+  main {
+	java {
+	  srcDirs 'src/'
+	}
+  }
+}
+
+eclipse {
+  classpath {
+	downloadSources = true
+	downloadJavadoc = true
+	defaultOutputDir file('build/classes/eclipse')
+  }
+}
+
+dependencies {
+  compile group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
+}
