@@ -107,7 +107,7 @@ public class SimpleSession implements HttpSession {
 		if(r instanceof HttpSessionBindingListener) {
 			((HttpSessionBindingListener)r).valueUnbound(new HttpSessionBindingEvent(this, v, r));
 		}
-		simpCont.sessAttrList[nondetInt()].attributeRemoved(new HttpSessionBindingEvent(this, v, r));
+		simpCont.notifySessionAttributeRemoved(this, v, r);
 	}
 
 	@Override
@@ -123,9 +123,9 @@ public class SimpleSession implements HttpSession {
 		if(v instanceof HttpSessionBindingListener) {
 			((HttpSessionBindingListener) v).valueBound(new HttpSessionBindingEvent(this, k, v));
 		}
-		simpCont.sessAttrList[nondetInt()].attributeAdded(new HttpSessionBindingEvent(this, k, v));
+		simpCont.notifySessionAttributeAdded(this, k, v);
 		if(n != null) {
-			simpCont.sessAttrList[nondetInt()].attributeReplaced(new HttpSessionBindingEvent(this, k, n));	
+			simpCont.notifySessionAttributeReplaced(this, k, n);
 		}
 		if(n instanceof HttpSessionBindingEvent) {
 			((HttpSessionBindingListener)n).valueUnbound(new HttpSessionBindingEvent(this, k, n));

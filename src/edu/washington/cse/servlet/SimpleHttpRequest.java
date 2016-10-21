@@ -23,7 +23,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletRequestAttributeEvent;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -227,15 +226,15 @@ public class SimpleHttpRequest implements HttpServletRequest {
 
 	@Override
 	public void removeAttribute(final String k) {
-		context.reqAttrList[nondetInt()].attributeReplaced(new ServletRequestAttributeEvent(context, this, k, attributes.remove(k)));
+		context.notifyRequestAttributeRemoved(this, k, attributes.remove(k));
 	}
 
 	@Override
 	public void setAttribute(final String k, final Object v) {
 		final Object r = attributes.put(k, v);
-		context.reqAttrList[nondetInt()].attributeAdded(new ServletRequestAttributeEvent(context, this, k, v));
+		context.notifyRequestAttributeAdded(this, k, v);
 		if(r != null) {
-			context.reqAttrList[nondetInt()].attributeReplaced(new ServletRequestAttributeEvent(context, this, k, r));	
+			context.notifyRequestAttributeReplaced(this, k, r);
 		}
 	}
 
