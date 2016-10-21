@@ -25,3 +25,8 @@ eclipse {
 dependencies {
   compile group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
 }
+
+task copyDep(type: Copy) {
+  into "$rootProject.buildDir/build-deps"
+  from configurations.runtime
+}
