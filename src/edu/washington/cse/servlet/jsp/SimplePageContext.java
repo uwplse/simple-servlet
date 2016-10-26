@@ -20,6 +20,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.el.ExpressionEvaluator;
 import javax.servlet.jsp.el.VariableResolver;
 
+import edu.washington.cse.servlet.SimpleContext;
 import edu.washington.cse.servlet.SimpleEnumeration;
 import edu.washington.cse.servlet.SimpleHttpRequest;
 import edu.washington.cse.servlet.SimpleHttpResponse;
@@ -97,8 +98,9 @@ public class SimplePageContext extends PageContext {
 
 	@Override
 	public void handlePageException(final Throwable k) throws ServletException, IOException { 
-		request.setAttribute("exc", k);
-		request.getRequestDispatcher("error").forward(request, response);
+		request.setAttribute("exception", k);
+		((SimpleContext)this.context).handlePageException(k, request, response);
+		request.removeAttribute("exception");
 	}
 
 	@Override

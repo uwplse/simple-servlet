@@ -29,6 +29,8 @@ import javax.servlet.SessionTrackingMode;
 import javax.servlet.descriptor.JspConfigDescriptor;
 import javax.servlet.http.HttpSession;
 
+import edu.washington.cse.servlet.SimpleHttpRequest;
+import edu.washington.cse.servlet.SimpleHttpResponse;
 import edu.washington.cse.servlet.exceptions.UnsupportedModelException;
 
 public abstract class SimpleContext implements ServletContext {
@@ -371,6 +373,10 @@ public abstract class SimpleContext implements ServletContext {
 	public void passSession() {
 		final SimpleSession sess = sessions.get(nondetInt());
 		notifySessionWillPassivate(sess);
+	}
+	
+	public void handlePageException(final Throwable t, final SimpleHttpRequest req, final SimpleHttpResponse resp) throws ServletException, IOException {
+		this.getRequestDispatcher("error").forward(req, resp);
 	}
 	
 	public abstract void notifySessionDestroyed(SimpleSession sess);
