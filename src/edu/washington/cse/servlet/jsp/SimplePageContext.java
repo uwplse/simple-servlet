@@ -88,7 +88,7 @@ public class SimplePageContext extends PageContext {
 
 	@Override
 	public HttpSession getSession() {
-		return ((HttpServletRequest)this.request).getSession();
+		return this.request.getSession();
 	}
 
 	@Override
