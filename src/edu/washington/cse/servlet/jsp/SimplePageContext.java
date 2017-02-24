@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -30,8 +31,8 @@ public class SimplePageContext extends PageContext {
 
 	private final HashMap<String, Object> attributes = new HashMap<>();
 	
-	private final SimpleHttpResponse response;
-	private final SimpleHttpRequest request;
+	private final HttpServletResponse response;
+	private final HttpServletRequest request;
 	private final Servlet servlet;
 	private final ServletConfig config;
 	private final ServletContext context;
@@ -42,8 +43,8 @@ public class SimplePageContext extends PageContext {
 
 	public SimplePageContext(final Servlet servlet, final ServletRequest request, final ServletResponse response) {
 		this.servlet = servlet;
-		this.request = (SimpleHttpRequest) request;
-		this.response = (SimpleHttpResponse) response;
+		this.request = (HttpServletRequest) request;
+		this.response = (HttpServletResponse) response;
 		this.config = servlet.getServletConfig();
 		this.context = config.getServletContext();
 		
@@ -99,7 +100,7 @@ public class SimplePageContext extends PageContext {
 	@Override
 	public void handlePageException(final Throwable k) throws ServletException, IOException { 
 		request.setAttribute("exception", k);
-		((SimpleContext)this.context).handlePageException(k, request, response);
+		((SimpleContext)this.context).handlePageException(k, (SimpleHttpRequest)request, (SimpleHttpResponse)response);
 		request.removeAttribute("exception");
 	}
 
