@@ -30,3 +30,10 @@ def load(f_name):
     if len(to_subst) == 2:
         subst_env.update(_recursive_subst(to_subst[1], subst_env))
     return _recursive_subst(to_subst[0], subst_env)
+
+if __name__ != "__main__":
+    f_name = os.path.join(os.path.dirname(__file__), "servlet_globals.yml")
+    if os.path.exists(f_name):
+        with open(f_name, "r") as f:
+            global_defs = yaml.load(f)
+        declare_globals(**global_defs)
