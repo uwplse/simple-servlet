@@ -4,12 +4,25 @@ apply plugin: 'eclipse'
 
 repositories {
   mavenCentral()
+
+  maven {
+	url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-snapshot"
+  }
+
+  maven {
+	url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release"
+  }
 }
 
 sourceSets {
-  main {
+  stubs {
 	java {
-	  srcDirs 'src/'
+	  srcDirs 'stubs/src'
+	}
+  }
+  model {
+	java {
+	  srcDirs 'model/src'
 	}
   }
 }
@@ -19,15 +32,36 @@ eclipse {
 	downloadSources = true
 	downloadJavadoc = true
 	defaultOutputDir file('build/classes/eclipse')
+	plusConfigurations += [configurations.stubsRuntime, configurations.modelRuntime]
+	minusConfigurations += [ configurations.runtime ]
   }
 }
 
 dependencies {
-  compile group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
-  compile group: "javax.servlet", name: "jsp-api", version: "2.0"
+  stubsCompile group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
+  stubsCompile group: "javax.servlet", name: "jsp-api", version: "2.0"
+  modelCompile group: "ca.mcgill.sable", name: "soot", version: "3.0.0-SNAPSHOT"
+  modelCompile group: 'com.google.guava', name: 'guava', version: '16.0.1'
+  modelCompile group: 'org.yaml', name: 'snakeyaml', version: '1.17'
+  modelCompile group: 'net.sf.jopt-simple', name: 'jopt-simple', version: '5.0.3'
+  compile group: 'org.apache.tomcat', name: 'tomcat-jasper', version: '7.0.26'
 }
+
+classes.dependsOn += [ stubsClasses, modelClasses ]
 
 task copyDep(type: Copy) {
   into "$rootProject.buildDir/build-deps"
-  from configurations.runtime
+  from configurations.stubsRuntime
+  from configurations.modelCompile
 }
+
+task stubsJar(type: Jar) {
+  from sourceSets.stubs.output
+}
+
+task modelJar(type: Jar) {
+  from sourceSets.model.output
+  baseName "servlet-model"
+}
+
+assemble.dependsOn += [ stubsJar, modelJar ]
