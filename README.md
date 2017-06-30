@@ -26,9 +26,11 @@ The model generation process takes as input a servlet definition
 file. This file describes where configuration files and classes can be
 found. Based on this information the generation process produces 2 artifacts.
 
-* The **model jar**, which contains instrumented struts/servlet classes, and a driver
-class that includes a main method that simulates the lifecycle of the application.
-* An **include/exclude file**, which describes packages and classes that should be included or excluded during an analysis.
+* The **model jar**, which contains instrumented struts/servlet
+  classes, and a driver class that includes a main method that
+  simulates the lifecycle of the application.
+* An **include/exclude file**, which describes packages and classes
+  that should be included or excluded during an analysis.
 
 In addition the process generates a **routing** file, which is used internally to resolve
 indirect invocations via the `RequestDispatcher` API.
@@ -68,8 +70,11 @@ field `foo`.
 Run `python scripts/compile_servlet_model.py path/to/definition/my_servlet_def.yml`. This will
 produce the following files:
 
-* `path/to/definition/generated/model.jar` - A Jar containing the generated driver class, and instrumented versions of application and servlet classes to resolve indirect flow
-* `path/to/definition/generated/include.list` - A file defining classes and packages to include/exclude during analysis
+* `path/to/definition/generated/model.jar` - A Jar containing the
+  generated driver class, and instrumented versions of application and
+  servlet classes to resolve indirect flow
+* `path/to/definition/generated/include.list` - A file defining
+  classes and packages to include/exclude during analysis
 
 # Using the Servlet Model
 
@@ -92,7 +97,6 @@ or `+` character. The remainder of the line defines a package pattern
 classes/packages specified should be explicitly included or excluded
 from an analysis, depending on the preceding symbol.
 
-
 # Stub Implementations
 
 The `stubs/` folder contains stub implementations for (most) of the
@@ -103,12 +107,21 @@ with any application built on top of the Servlet framework.
 ## Usage notes
 
 * Both `SessionAttributes` and `RequestAttributes` contain a special
-static field: `$INSTANCE`. This field can be used to represent
-attributes that are global for the lifetime of the application and request respectively.
+  static field: `$INSTANCE`. This field can be used to represent
+  attributes that are global for the lifetime of the application and
+  request respectively.
 
-* Portions of the specification that are not properly modeled throw a new instance
-of `UnsupportedModelException`. Analyses can detect the presence of this constructor to
-signal an error or issue a warning (or silently continue).
+* The driver function contains two special methods,
+  `SimpleServletKillRequest` and `SimpleServletKillSession` which
+  correspond to the end of the request handling and the servlet
+  lifetime respectively. Analysis can recognize these methods to kill
+  any facts stored in the two `$INSTANCE` fields mentioned above.
+	  
+
+* Portions of the specification that are not properly modeled throw a
+  new instance of `UnsupportedModelException`. Analyses can detect the
+  presence of this constructor to signal an error or issue a warning
+  (or silently continue).
 
 # Specification Variables
 
@@ -154,8 +167,10 @@ defined for every servlet specification. By default, this set of variables is a 
 
 The mapping may be extended in three ways:
 
-* Including a file called `servlet_globals.yml` in the same folder as `servlet_def.py` in this project's `scripts/` directory
-* Programmatically, by calling the `servlet_def.declare_globals` function in the `servlet_def` module
+* Including a file called `servlet_globals.yml` in the same folder as
+  `servlet_def.py` in this project's `scripts/` directory
+* Programmatically, by calling the `servlet_def.declare_globals`
+  function in the `servlet_def` module
 * Creating a specialization of simple servlet (see below)
 
 In addition, values in the substitution map undergo their own substitution process: all
