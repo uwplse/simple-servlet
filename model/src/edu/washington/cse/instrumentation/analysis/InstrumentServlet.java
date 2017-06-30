@@ -3,6 +3,7 @@ package edu.washington.cse.instrumentation.analysis;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +25,8 @@ import soot.PackManager;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
+import soot.SourceLocator;
+import soot.SourceLocator.FoundFile;
 import soot.options.Options;
 import edu.washington.cse.instrumentation.analysis.transformers.ConditionalTransformer;
 import edu.washington.cse.instrumentation.analysis.transformers.DefaultMethodSynthesisTransformer;
@@ -95,6 +98,7 @@ public class InstrumentServlet {
 		final String appClasspath = args[1];
 		final String routingFile = args[2];
 		final String outputDir = args[3];
+		final String digestList = args[4];
 		
 		o.set_output_dir(outputDir);
 		final Set<String> toInstrument = new HashSet<>();
@@ -140,6 +144,18 @@ public class InstrumentServlet {
 		
 		Scene.v().getApplicationClasses().clear();
 		Scene.v().getApplicationClasses().addAll(toWrite);
+		
+		final HashSet<String> inputFiles = new HashSet<>();
+		for(final SootClass cls : toWrite) {
+			final String path = cls.getName().replace(".", "/").concat(".class");
+			final FoundFile f = SourceLocator.v().lookupInClassPath(path);
+			inputFiles.add(f.getFilePath());
+		}
+		try(PrintStream ps = new PrintStream(new File(digestList))) {
+			for(final String inF : inputFiles) {
+				ps.println(inF);
+			}
+		}
 		
 		PackManager.v().runBodyPacks();
 		PackManager.v().writeOutput();

@@ -3,10 +3,12 @@ import os.path
 import servlet_def, servlet_model
 from jinja2 import Environment, FileSystemLoader
 
-loader = FileSystemLoader(os.path.join(os.path.dirname(sys.argv[0]), "templates"))
+this_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+
+loader = FileSystemLoader(os.path.join(this_dir, "templates"))
 env = Environment(loader = loader)
 
-build_dir = os.path.join(os.path.dirname(sys.argv[0]), "../build")
+build_dir = os.path.join(this_dir, "../build")
 job_def = servlet_def.load(sys.argv[1])
 
 template_name = "basic_servlet.java"
