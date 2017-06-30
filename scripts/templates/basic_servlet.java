@@ -130,7 +130,7 @@ public class PseudoMain {
        {% endfor %}
        {{ final_handler }}.doFilter(sr, sp);
 
-	   LegatoKillRequest();
+	   SimpleServletKillRequest();
 
 	   context.notifyRequestDestroyed(sr);
 	   context.destroySession();
@@ -138,7 +138,7 @@ public class PseudoMain {
 	   context.passSession();
     }
 
-    LegatoKillSession();
+    SimpleServletKillSession();
 
     {% for f in filters %}
     {{ f.var_name }}.destroy();
@@ -151,8 +151,8 @@ public class PseudoMain {
     context.notifyContextDestroyed();
   }
 
-  public static void LegatoKillSession() { }
-  public static void LegatoKillRequest() { }
+  public static void SimpleServletKillSession() { }
+  public static void SimpleServletKillRequest() { }
 }
 
 class AllServletsHandlers implements FilterChain {
