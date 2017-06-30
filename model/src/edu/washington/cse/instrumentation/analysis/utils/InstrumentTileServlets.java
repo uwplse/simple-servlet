@@ -20,6 +20,7 @@ import java.util.Set;
 import org.yaml.snakeyaml.Yaml;
 
 import soot.Body;
+import soot.BooleanType;
 import soot.G;
 import soot.Local;
 import soot.Modifier;
@@ -38,6 +39,7 @@ import soot.Value;
 import soot.ValueBox;
 import soot.VoidType;
 import soot.javaToJimple.LocalGenerator;
+import soot.jimple.AssignStmt;
 import soot.jimple.DefinitionStmt;
 import soot.jimple.FieldRef;
 import soot.jimple.InstanceFieldRef;
@@ -181,12 +183,22 @@ public class InstrumentTileServlets {
 				args.add(body.getParameterLocals().get(0));
 				args.add(body.getParameterLocals().get(1));
 				
-				final SootMethodRef includRef =
+				final SootMethodRef includeRef =
 					Scene.v().makeMethodRef(dispatcherType.getSootClass(), "include", Arrays.<Type>asList(
 							RefType.v("javax.servlet.ServletRequest"),
 							RefType.v("javax.servlet.ServletResponse")
 						), VoidType.v(), false);
-				unitChain.swapWith(s, jimple.newInvokeStmt(jimple.newInterfaceInvokeExpr(dispatchLocal, includRef, args)));
+				unitChain.insertBefore(jimple.newInvokeStmt(jimple.newInterfaceInvokeExpr(dispatchLocal, includeRef, args)), s);
+				
+				final SootMethodRef nondetRef =
+					Scene.v().makeMethodRef(
+						Scene.v().getSootClass("edu.washington.cse.servlet.Util"),
+						"nondetBool", Collections.<Type>emptyList(), BooleanType.v(), true
+				);
+				assert s instanceof AssignStmt;
+				final Value lhs = ((AssignStmt)s).getLeftOp();
+				final Unit dummyAssignment = jimple.newAssignStmt(lhs, jimple.newStaticInvokeExpr(nondetRef));
+				unitChain.swapWith(s, dummyAssignment);
 			}
 		}
 	}
