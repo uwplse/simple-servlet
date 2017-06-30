@@ -179,7 +179,7 @@ class ListenerModel(DependencyTrackingModel):
             return to_return
 
         sub_proc = [
-            "java", "-classpath", "{0}/classes/eclipse:{0}/build-deps/*".format(self.build_dir), 
+            "java", "-classpath", "{0}/libs/servlet-model.jar:{0}/build-deps/*".format(self.build_dir), 
             "edu.washington.cse.instrumentation.analysis.utils.ClassifyListeners",
             "{0}/build-deps/javax.servlet-api-3.0.1.jar:{1}".format(self.build_dir,
                                                                     self.class_dir)
@@ -527,7 +527,7 @@ class StrutsAppDefinition(WebAppDefinition):
             in_yaml.flush()
             sub_proc = [
                 "java", "-ea", "-classpath", 
-                "{0}/classes/eclipse:{0}/build-deps/*".format(self.build_dir),
+                "{0}/libs/servlet-model.jar:{0}/build-deps/*".format(self.build_dir),
                 "edu.washington.cse.instrumentation.analysis.utils.GenerateStrutsActions",
                 self.class_dir, in_yaml.name, out_yaml.name, self.generated_dir
             ]
@@ -589,7 +589,7 @@ class StrutsAppDefinition(WebAppDefinition):
             in_yaml.flush()
             sub_proc = [
                 "java", "-ea", "-classpath", 
-                "{0}/classes/eclipse:{0}/build-deps/*".format(self.build_dir),
+                "{0}/libs/servlet-model.jar:{0}/build-deps/*".format(self.build_dir),
                 "edu.washington.cse.instrumentation.analysis.utils.InstrumentTileServlets",
                 self.jsp_dir, in_yaml.name, out_yaml.name, self.generated_dir
             ]
@@ -668,7 +668,7 @@ class StrutsAppDefinition(WebAppDefinition):
             in_yaml.flush()
             sub_proc = [
                 "java", "-ea", "-classpath", 
-                "{0}/classes/eclipse:{0}/build-deps/*".format(self.build_dir),
+                "{0}/libs/servlet-model.jar:{0}/build-deps/*".format(self.build_dir),
                 "edu.washington.cse.instrumentation.analysis.utils.InstrumentStruts",
                 self.generated_dir, in_yaml.name, self.output_package + ".PseudoMain$NonDetForward", self.output_package + ".PseudoMain$UrlDispatchActionForward"
             ]
