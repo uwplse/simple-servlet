@@ -93,7 +93,6 @@ public final class DispatchResolutionTransformer implements ConditionalTransform
 				}
 				final Local tmp = lg.generateLocal(Scene.v().getType("javax.servlet.RequestDispatcher"));
 				final Jimple jimple = Jimple.v();
-				m.getActiveBody().getLocals().add(tmp);
 				as.setLeftOp(tmp);
 				final RefType handlerType = Scene.v().getRefType(klass);
 				lhs.setType(handlerType);
