@@ -43,6 +43,7 @@ dependencies {
   modelCompile group: "ca.mcgill.sable", name: "soot", version: "3.0.0-SNAPSHOT"
   modelCompile group: 'com.google.guava', name: 'guava', version: '16.0.1'
   modelCompile group: 'org.yaml', name: 'snakeyaml', version: '1.17'
+  modelCompile group: 'net.sf.jopt-simple', name: 'jopt-simple', version: '5.0.3'
   compile group: 'org.apache.tomcat', name: 'tomcat-jasper', version: '7.0.26'
 }
 

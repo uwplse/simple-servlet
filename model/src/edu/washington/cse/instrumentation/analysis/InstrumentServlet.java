@@ -19,6 +19,9 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+
 import org.yaml.snakeyaml.Yaml;
 
 import soot.PackManager;
@@ -87,12 +90,17 @@ public class InstrumentServlet {
 		return Collections.emptyList();
 	}
 	
-	public static void main(final String[] args) throws IOException {
+	public static void main(final String[] inArgs) throws IOException {
 		final Options o = Options.v();
 		o.set_allow_phantom_refs(true);
 		o.set_whole_program(false);
 		o.set_output_format(Options.output_format_class);
 		o.set_asm_backend(true);
+		
+		final OptionParser parser = new OptionParser();
+		parser.accepts("aggressive-inline");
+		final OptionSet parse = parser.parse(inArgs);
+		final String[] args = parse.nonOptionArguments().toArray(new String[0]);
 		
 		final String servletClasspath = args[0];
 		final String appClasspath = args[1];
@@ -133,7 +141,7 @@ public class InstrumentServlet {
 			new JSPSimplificationTransformer(),
 			new DefaultMethodSynthesisTransformer(),
 			new JspDispatchInlineTransformer(),
-			new DispatchInlineTransformer(router),
+			new DispatchInlineTransformer(router, parse.has("aggressive-inline")),
 		};
 		
 		final Set<SootClass> toWrite = new HashSet<>();

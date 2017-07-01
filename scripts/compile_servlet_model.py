@@ -100,7 +100,8 @@ def compute_digest_file(d_file, target_files):
     with open(d_file, "w") as f:
         subprocess.check_call(cmd, stdout = f)
 
-def instrument_servlet(root_dir, servlet_class_path, app_class_path, generated_dir, routing):
+def instrument_servlet(root_dir, servlet_class_path, app_class_path,
+                       generated_dir, routing, servlet_def):
     instrument_dir = os.path.join(generated_dir, "../instrumented")
     if not os.path.exists(instrument_dir):
         os.makedirs(instrument_dir)
@@ -117,16 +118,19 @@ def instrument_servlet(root_dir, servlet_class_path, app_class_path, generated_d
 
     app_class_path += ":" + generated_dir
 
-    instrument_command = [
-        "java", "-classpath", instrument_cp, "edu.washington.cse.instrumentation.analysis.InstrumentServlet",
-        servlet_class_path, app_class_path, routing, instrument_dir,
-    ]
+    instrument_command = [ "java", "-classpath", instrument_cp,
+                           "edu.washington.cse.instrumentation.analysis.InstrumentServlet" ]
+
+    if "instrumentation" in servlet_def and servlet_def["instrumentation"].get("aggressive_inline", False):
+        instrument_command.append("--aggressive-inline")
+
+    instrument_command += [ servlet_class_path, app_class_path, routing, instrument_dir ]
     with tempfile.NamedTemporaryFile(mode = "r") as f:
         instrument_command.append(f.name)
         subprocess.check_call(instrument_command)
         target_files = [s.strip() for s in f.readlines()]
-    target_files.append(os.path.join(generated_dir, "_digest"))
 
+    target_files.append(os.path.join(generated_dir, "_digest"))
     compute_digest_file(digest_file, target_files)
 
     return instrument_dir
@@ -200,7 +204,8 @@ def main(argv):
 
     instrumented_dir = instrument_servlet(root_project_dir,
                                           servlet_class_path, app_class_path, generated_dir,
-                                          generated_routing)
+                                          generated_routing,
+                                          servlet_def)
 
     class_trees = [
         instrumented_dir,

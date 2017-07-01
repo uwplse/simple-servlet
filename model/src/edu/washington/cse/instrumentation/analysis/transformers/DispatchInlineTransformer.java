@@ -11,22 +11,26 @@ import edu.washington.cse.instrumentation.analysis.JspUrlRouter;
 public class DispatchInlineTransformer implements ConditionalTransformer {
 	private final DispatchResolutionTransformer resolver;
 	private final AggressiveDispatchInlineTransformer inliner;
+	private final boolean aggressiveInline;
 
-	public DispatchInlineTransformer(final JspUrlRouter router, final boolean quiet) {
+	public DispatchInlineTransformer(final JspUrlRouter router, final boolean quiet, final boolean aggressiveInline) {
 		final Map<Local, Set<String>> deferredResolution = new HashMap<>();
 
 		this.resolver = new DispatchResolutionTransformer(router, deferredResolution, quiet);
 		this.inliner = new AggressiveDispatchInlineTransformer(router, deferredResolution, quiet);
+		this.aggressiveInline = aggressiveInline;
 	}
 	
-	public DispatchInlineTransformer(final JspUrlRouter router) {
-		this(router, false);
+	public DispatchInlineTransformer(final JspUrlRouter router, final boolean aggressiveInline) {
+		this(router, false, aggressiveInline);
 	}
 
 	@Override
 	public boolean transformMethod(final SootMethod m) {
 		boolean instrumented = this.resolver.transformMethod(m);
-		instrumented = this.inliner.transformMethod(m) || instrumented;
+		if(aggressiveInline) {
+			instrumented = this.inliner.transformMethod(m) || instrumented;
+		}
 		return instrumented;
 	}
 }
