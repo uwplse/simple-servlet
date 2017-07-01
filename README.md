@@ -64,6 +64,7 @@ field `foo`.
 | `extra_libs.jars` | Path array | no | List of jars that should be included when compiling the generated driver |
 | `extra_libs.exclude` | String array | no | List of package patterns (of the form `foo.bar.*`) that define packages to exclude from an analysis |
 | `extra_libs.include` | String array | no | List of class names that should be included by an analysis |
+| `instrumentation.aggressive_inline` | Boolean | no | If set to true, megamorphic `forward/include` invocations that cannot be statically resolved are unrolled into a non-deterministic chain of monomorphic invocations |
 
 # Generating the Servlet Model
 
