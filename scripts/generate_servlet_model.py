@@ -18,7 +18,7 @@ if "struts" in job_def:
     model_handler = servlet_model.StrutsAppDefinition
 
 web_app = model_handler(job_def, build_dir)
-template = env.get_template(template_name)
+web_app.add_digest_file(sys.argv[1])
 
 digest = web_app.get_digest()
 if len(sys.argv) > 2 and os.path.exists(sys.argv[2]):
@@ -28,6 +28,7 @@ if len(sys.argv) > 2 and os.path.exists(sys.argv[2]):
         print "cached"
         sys.exit(0)
 
+template = env.get_template(template_name)
 model = web_app.get_model()
 print template.render(model)
 routing = web_app.get_routing_info()
